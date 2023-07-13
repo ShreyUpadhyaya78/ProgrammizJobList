@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Listing Site</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f6fd;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .filter-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .filter-input {
+      flex: 1;
+      height: 40px;
+      padding: 5px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .filter-button {
+      height: 40px;
+      margin-left: 10px;
+      padding: 0 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .category-dropdown {
+      height: 40px;
+      margin-left: 10px;
+      padding: 5px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .active-tags {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .active-tag {
+      display: flex;
+      align-items: center;
+      background-color: #f2f9fd;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      margin-right: 10px;
+      padding: 5px 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .active-tag-text {
+      margin-right: 5px;
+    }
+
+    .active-tag-close {
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .job-tile {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #fff;
+    }
+
+    .company-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    .job-info {
+      flex: 1;
+    }
+
+    .position {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .company-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .timing-location {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .keywords {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .posted-on {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .programming-languages {
+      display: inline;
+      background-color: #e3f1fd;
+      color: #007bff;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Job Listings</h1>
+
+    <div class="filter-container">
+      <input type="text" id="search-input" class="filter-input" placeholder="Enter search term">
+      <select id="category-dropdown" class="category-dropdown">
+        <option value="language">Language</option>
+        <option value="location">Location</option>
+        <option value="title">Job Title</option>
+        <option value="type">Job Type</option>
+        <option value="company">Company</option>
+      </select>
+      <button onclick="filterJobs()" class="filter-button">Search</button>
+      <button onclick="clearFilters()" class="filter-button">Clear Filters</button>
+    </div>
+
+    <div class="active-tags" id="active-tags"></div>
+
+    <div id="job-list"></div>
+  </div>
+
+  <script>
+    // JSON data
+    var jobs = [
+      {
+        "position": "Senior Frontend Developer",
+        "timing": "Full Time",
+        "location": "Kathmandu",
+        "keywords": ["React", "Frontend", "JavaScript"],
+        "company": "DocSumo",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/docsumo-logo.jpeg",
+        "posted_on": 1687057261107
+      },
+      {
+        "position": "Full Stack Developer",
+        "timing": "Part Time",
+        "location": "Remote",
+        "keywords": ["Nodejs", "React", "SQL"],
+        "company": "Fusemachines",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/fusemachines-logo.png",
+        "posted_on": 1686603737828
+      },
+      {
+        "position": "Junior Backend Developer",
+        "timing": "Full Time",
+        "location": "Kathmandu",
+        "keywords": ["C#", ".NET Core", "MySQL"],
+        "company": "Naamche",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/naamche-logo.png",
+        "posted_on": 1686996104190
+      },
+      {
+        "position": "Data Engineer",
+        "timing": "Full Time",
+        "location": "Lalitpur",
+        "keywords": ["Apache Spark", "SQL", "ETL"],
+        "company": "Techkraft",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/techkraft-logo.jpeg",
+        "posted_on": 1687140157619
+      },
+      {
+        "position": "Senior QA Engineer",
+        "timing": "Full Time",
+        "location": "Pokhara",
+        "keywords": ["Selenium", "Cypress", "Python"],
+        "company": "JankariTech",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/jankaritech-logo.png",
+        "posted_on": 1686063779309
+      },
+      {
+        "position": "Frontend Intern",
+        "timing": "Full Time",
+        "location": "Pokhara",
+        "keywords": ["HTML", "CSS", "JavaScript"],
+        "company": "Proshore",
+        "company_logo": "https://storage.googleapis.com/programiz-static/hiring/software/job-listing-page-challenge/logos/proshore-logo.png",
+        "posted_on": 1687230206051
+      }
+    ];
+    
+    // Array to store active search tags
+    var activeTags = [];
+
+    // Function to filter jobs based on category and search term
+    function filterJobs() {
+      var searchInput = document.getElementById("search-input").value.toLowerCase();
+      var categoryDropdown = document.getElementById("category-dropdown");
+      var selectedCategory = categoryDropdown.value;
+
+      if (searchInput.trim() === "") return;
+
+      var searchTags = searchInput.split(",").map(tag => tag.trim());
+      if (searchTags.length === 1) {
+        activeTags = searchTags;
+      } else {
+        activeTags = searchTags.filter(tag => tag !== "");
+      }
+
+      updateActiveTags();
+      var filteredJobs = jobs.filter(function(job) {
+        if (selectedCategory === "language") {
+          return job.keywords.some(function(keyword) {
+            return activeTags.includes(keyword.toLowerCase());
+          });
+        } else if (selectedCategory === "location") {
+          return job.location.toLowerCase().includes(searchInput);
+        } else if (selectedCategory === "title") {
+          return job.position.toLowerCase().includes(searchInput);
+        } else if (selectedCategory === "type") {
+          return job.timing.toLowerCase().includes(searchInput);
+        } else if (selectedCategory === "company") {
+          return job.company.toLowerCase().includes(searchInput);
+        }
+      });
+      generateJobTiles(filteredJobs);
+    }
+
+    // Function to clear search filters
+    function clearFilters() {
+      activeTags = [];
+      updateActiveTags();
+      document.getElementById("search-input").value = "";
+      generateJobTiles(jobs);
+    }
+
+    // Function to remove an active tag
+    function removeActiveTag(tag) {
+      var index = activeTags.indexOf(tag);
+      if (index > -1) {
+        activeTags.splice(index, 1);
+        updateActiveTags();
+        var filteredJobs = jobs.filter(function(job) {
+          return job.keywords.some(function(keyword) {
+            return activeTags.includes(keyword.toLowerCase());
+          });
+        });
+        generateJobTiles(filteredJobs);
+      }
+    }
+
+    // Function to generate active tag elements
+    function updateActiveTags() {
+      var activeTagsDiv = document.getElementById("active-tags");
+      activeTagsDiv.innerHTML = ""; // Clear previous active tags
+      
+      activeTags.forEach(function(tag) {
+        var activeTag = document.createElement("div");
+        activeTag.classList.add("active-tag");
+
+        var activeTagText = document.createElement("span");
+        activeTagText.classList.add("active-tag-text");
+        activeTagText.textContent = tag;
+
+        var activeTagClose = document.createElement("span");
+        activeTagClose.classList.add("active-tag-close");
+        activeTagClose.textContent = "x";
+        activeTagClose.setAttribute("onclick", `removeActiveTag('${tag}')`);
+
+        activeTag.appendChild(activeTagText);
+        activeTag.appendChild(activeTagClose);
+        activeTagsDiv.appendChild(activeTag);
+      });
+    }
+
+    // Function to generate job tiles
+    function generateJobTiles(jobs) {
+      var jobListDiv = document.getElementById("job-list");
+      jobListDiv.innerHTML = ""; // Clear previous job listings
+
+      for (var i = 0; i < jobs.length; i++) {
+        var job = jobs[i];
+
+        var jobTileDiv = document.createElement("div");
+        jobTileDiv.classList.add("job-tile");
+
+        // Company logo
+        var companyLogo = document.createElement("img");
+        companyLogo.classList.add("company-logo");
+        companyLogo.src = job.company_logo;
+
+        // Job info
+        var jobInfoDiv = document.createElement("div");
+        jobInfoDiv.classList.add("job-info");
+
+        // Job position
+        var position = document.createElement("div");
+        position.classList.add("position");
+        position.textContent = job.position;
+
+        // Company name
+        var companyName = document.createElement("div");
+        companyName.classList.add("company-name");
+        companyName.textContent = job.company;
+
+        // Job timing and location
+        var timingLocation = document.createElement("div");
+        timingLocation.classList.add("timing-location");
+        timingLocation.textContent = job.timing + " | " + job.location;
+
+        // Job keywords
+        var keywords = document.createElement("div");
+        keywords.classList.add("keywords");
+        keywords.innerHTML = "Keywords: ";
+        for (var j = 0; j < job.keywords.length; j++) {
+          var programmingLanguage = document.createElement("span");
+          programmingLanguage.classList.add("programming-languages");
+          programmingLanguage.textContent = job.keywords[j];
+          keywords.appendChild(programmingLanguage);
+        }
+
+        // Posted on date
+        var postedOn = document.createElement("div");
+        postedOn.classList.add("posted-on");
+        var postedDate = new Date(job.posted_on);
+        postedOn.textContent = "Posted on: " + postedDate.toLocaleDateString();
+
+        // Append elements to the job tile div
+        jobInfoDiv.appendChild(position);
+        jobInfoDiv.appendChild(companyName);
+        jobInfoDiv.appendChild(timingLocation);
+        jobInfoDiv.appendChild(keywords);
+        jobInfoDiv.appendChild(postedOn);
+
+        jobTileDiv.appendChild(companyLogo);
+        jobTileDiv.appendChild(jobInfoDiv);
+
+        // Append job tile to the job list div
+        jobListDiv.appendChild(jobTileDiv);
+      }
+    }
+
+    // Handle enter key press in search input
+    document.getElementById("search-input").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        filterJobs();
+      }
+    });
+
+    // Initial load
+    generateJobTiles(jobs);
+  </script>
+</body>
+</html>
